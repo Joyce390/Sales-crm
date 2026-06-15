@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mt-4">Tech Dashboard</h2>
+
+<div class="card mb-3">
+    <div class="card-header bg-warning text-dark">
+        🔔 Notifications
+    </div>
+
+    <ul class="list-group list-group-flush">
+        {% for note in notifications %}
+            <li class="list-group-item {% if not note.is_read %}bg-light{% endif %}">
+                
+                {{ note.message }}
+
+                <!-- Mark as read button -->
+
+                <form method="POST" action="{{ url_for('mark_notification_read', id=note.id) }}">
+                  <button class="btn btn-sm btn-success">Mark as read</button>
+                </form>
+
+                <small class="text-muted d-block">
+                    {{ note.created_at.strftime('%Y-%m-%d %H:%M') }}
+                </small>
+            </li>
+        {% else %}
+            <li class="list-group-item text-muted">
+                No notifications
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="row my-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5>Customers</h5>
+                <h3>{{ customers|length }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5>My Applications</h5>
+                <h3>{{ applications|length }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ACTION BUTTON -->
+<a href="{{ url_for('add_customer') }}" class="btn btn-primary mb-3">
+    + Add Customer
+</a>
+
+<a href="{{ url_for('add_application') }}" class="btn btn-success mb-3">
+    + Add Application
+</a>
+
+<h4>Assigned Applications</h4>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Sender ID</th>
+            <th>Company</th>
+            <th>Service</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for app in applications %}
+        <tr>
+            <td>{{ app.customer.name }}</td>
+            <td>{{ app.sender_id }}</td>
+            <td>{{ app.company }}</td>
+            <td>{{ app.service }}</td>
+
+            <td>
+                <span class="badge 
+                    {% if app.status == 'Approved' %}bg-success
+                    {% elif app.status == 'Rejected' %}bg-danger
+                    {% elif app.status == 'Assigned' %}bg-info
+                    {% else %}bg-warning{% endif %}">
+                    {{ app.status }}
+                </span>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

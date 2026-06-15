@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Add Application</h3>
+
+<form method="POST">
+
+    <!-- CUSTOMER -->
+    <div class="mb-3">
+        <label>Customer</label>
+        <select name="customer_id" class="form-control" required>
+            {% for customer in customers %}
+                <option value="{{ customer.id }}">{{ customer.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- SENDER ID -->
+    <div class="mb-3">
+        <label>Sender ID</label>
+        <input type="text" name="sender_id" class="form-control" required>
+    </div>
+
+    <!-- COMPANY -->
+    <div class="mb-3">
+        <label>Company</label>
+        <input type="text" name="company" class="form-control" required>
+    </div>
+
+    <!-- SERVICE -->
+    <div class="mb-3">
+        <label>Service</label>
+        <input type="text" name="service" class="form-control" required>
+    </div>
+
+    <!-- STREAM -->
+    <div class="mb-3">
+        <label>Stream</label>
+        <select name="stream" class="form-control" required>
+            <option value="">Select Stream</option>
+            <option value="Bumble Bee">🐝 Bumble Bee</option>
+            <option value="Lady Bird">🐦 Lady Bird</option>
+        </select>
+    </div>
+
+    <button class="btn btn-primary">
+        Submit Application
+    </button>
+
+</form>
+
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mt-4">Admin Dashboard</h2>
+
+<!-- STATS -->
+<div class="row my-4">
+
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5>Customers</h5>
+                <h3>{{ customers|length }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5>Applications</h5>
+                <h3>{{ applications|length }}</h3>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- QUICK ACTIONS -->
+<div class="mb-3">
+    <a href="{{ url_for('add_customer') }}" class="btn btn-primary">
+        + Add Customer
+    </a>
+
+    <a href="{{ url_for('add_application') }}" class="btn btn-success">
+        + Add Application
+    </a>
+</div>
+
+<!-- CUSTOMERS TABLE -->
+<h4>Customers</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for customer in customers %}
+        <tr>
+            <td>{{ customer.name }}</td>
+            <td>{{ customer.email }}</td>
+            <td>{{ customer.phone }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- APPLICATIONS TABLE -->
+<h4 class="mt-5">Applications</h4>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Sender</th>
+            <th>Company</th>
+            <th>Service</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for app in applications %}
+        <tr>
+
+            <td>{{ app.customer.name }}</td>
+            <td>{{ app.sales_user.username if app.sales_user else "N/A" }}</td>
+            <td>{{ app.company }}</td>
+            <td>{{ app.service }}</td>
+
+            <td>
+                <span class="badge 
+                    {% if app.status == 'Approved' %}bg-success
+                    {% elif app.status == 'Rejected' %}bg-danger
+                    {% elif app.status == 'Assigned' %}bg-info
+                    {% else %}bg-warning{% endif %}">
+                    {{ app.status }}
+                </span>
+            </td>
+
+            <td>
+
+                <form action="{{ url_for('update_application', id=app.id) }}" method="POST" style="display:inline;">
+                    <input type="hidden" name="status" value="Submitted">
+                    <button class="btn btn-info btn-sm">Submitted</button>
+                </form>
+
+                <form action="{{ url_for('update_application', id=app.id) }}" method="POST" style="display:inline;">
+                    <input type="hidden" name="status" value="Approved">
+                    <button class="btn btn-success btn-sm">Approve</button>
+                </form>
+
+                <form action="{{ url_for('update_application', id=app.id) }}" method="POST" style="display:inline;">
+                    <input type="hidden" name="status" value="Rejected">
+                    <button class="btn btn-danger btn-sm">Reject</button>
+                </form>
+
+            </td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

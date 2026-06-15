@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TalkSasa CRM</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 230px;
+            padding-top: 1rem;
+            background-color: #212529;
+        }
+
+        .sidebar h4 {
+            text-align: center;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 10px 15px;
+            color: #ccc;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 5px 10px;
+        }
+
+        .sidebar a:hover {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        main {
+            margin-left: 230px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .crm-topbar {
+            background: white;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .crm-title {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .crm-menu a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .crm-menu a:hover {
+            color: #0d6efd;
+        }
+
+        .badge-notify {
+            background: red;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        /* FOOTER */
+        .crm-footer{
+            text-align:center;
+            padding:12px;
+            font-size:12px;
+            color:#6b7280;
+            border-top:1px solid #e5e7eb;
+            margin-top:20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="sidebar">
+
+    <h4>TalkSasa CRM</h4>
+
+    {% set role = session.get('role') %}
+
+    {% if role == 'superadmin' %}
+        <a href="{{ url_for('admin_report') }}">Report</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('view_customers') }}">Customers</a>
+        <a href="{{ url_for('applications_list') }}">Applications</a>
+        <a href="{{ url_for('add_customer') }}">Add Customer</a>
+        <a href="{{ url_for('add_application') }}">Add Application</a>
+        <a href="{{ url_for('kanban') }}">Leads Board</a>
+        <a href="{{ url_for('permissions') }}">Permissions</a>
+        <a href="{{ url_for('create_user') }}">Create User</a>
+    {% endif %}
+
+    {% if role == 'sales' %}
+        <a href="{{ url_for('sales_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('view_customers') }}">Customers</a>
+        <a href="{{ url_for('applications_list') }}">Applications</a>
+        <a href="{{ url_for('kanban') }}">Leads Board</a>
+    {% endif %}
+
+    {% if role == 'tech' %}
+        <a href="{{ url_for('tech_dashboard') }}">
+            Dashboard
+            {% if notifications %}
+                <span class="badge-notify">{{ notifications|length }}</span>
+            {% endif %}
+        </a>
+        <a href="{{ url_for('view_customers') }}">Customers</a>
+        <a href="{{ url_for('applications_list') }}">Applications</a>
+        <a href="{{ url_for('add_application') }}">Add Application</a>
+        <a href="{{ url_for('kanban') }}">Leads Board</a>
+    {% endif %}
+
+    {% if role == 'customer' %}
+        <a href="{{ url_for('customer_dashboard') }}">Dashboard</a>
+    {% endif %}
+
+    <form action="{{ url_for('logout') }}" method="GET" onsubmit="return confirm('Confirm logout?');">
+        <button type="submit" class="btn btn-outline-danger btn-sm w-75 mx-3 mt-3">
+            Logout
+        </button>
+    </form>
+
+</nav>
+
+<main>
+
+    <div class="container">
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <div class="alert alert-success alert-dismissible fade show">
+                        {{ msg }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+
+        <!-- FOOTER -->
+        <div class="crm-footer">
+            © 2026 TalkSasa CRM • Developed by JAO
+        </div>
+
+    </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

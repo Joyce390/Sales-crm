@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Admin Report</title>
+
+    <style>
+        body { font-family: Arial; font-size: 12px; }
+
+        h2 { text-align: center; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 6px;
+            text-align: left;
+        }
+
+        th {
+            background: #1f3c88;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>TalkSasa CRM - Admin Report</h2>
+
+<h3>Sales Performance</h3>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Total</th>
+        <th>Converted</th>
+        <th>Lost</th>
+    </tr>
+
+    {% for s in sales_performance %}
+    <tr>
+        <td>{{ s.name }}</td>
+        <td>{{ s.total }}</td>
+        <td>{{ s.converted }}</td>
+        <td>{{ s.lost }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h3>Tech Performance</h3>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Total</th>
+        <th>Converted</th>
+        <th>Lost</th>
+    </tr>
+
+    {% for t in tech_performance %}
+    <tr>
+        <td>{{ t.name }}</td>
+        <td>{{ t.total }}</td>
+        <td>{{ t.converted }}</td>
+        <td>{{ t.lost }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+:root{
+    /* 🔵 Modern SaaS CRM Palette */
+    --ts-primary:#1e3a8a;   /* deep trust blue */
+    --ts-secondary:#6366f1; /* soft indigo */
+    --ts-accent:#a855f7;    /* controlled purple accent */
+    --ts-bg:#f8fafc;        /* clean background */
+
+    --ts-success:#10b981;
+    --ts-warning:#f59e0b;
+    --ts-danger:#ef4444;
+}
+
+/* BASE */
+body{
+    background:var(--ts-bg);
+}
+
+/* HEADER */
+.crm-header{
+    background:linear-gradient(135deg,var(--ts-primary),var(--ts-secondary));
+    color:white;
+    border-radius:18px;
+    padding:22px;
+    margin-bottom:22px;
+    box-shadow:0 8px 20px rgba(0,0,0,.10);
+}
+
+.crm-header h2{
+    font-weight:650;
+    margin-bottom:4px;
+}
+
+.crm-header p{
+    margin:0;
+    opacity:.9;
+    font-size:14px;
+}
+
+/* KPI CARDS */
+.kpi-card{
+    border:none;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 4px 14px rgba(0,0,0,.07);
+    transition:.2s ease;
+}
+
+.kpi-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 22px rgba(0,0,0,.12);
+}
+
+.kpi-total{
+    background:linear-gradient(135deg,#1e3a8a,#3b82f6);
+    color:white;
+}
+
+.kpi-process{
+    background:linear-gradient(135deg,#f59e0b,#fbbf24);
+    color:#1f2937;
+}
+
+.kpi-completed{
+    background:linear-gradient(135deg,#10b981,#34d399);
+    color:white;
+}
+
+.kpi-rejected{
+    background:linear-gradient(135deg,#ef4444,#f87171);
+    color:white;
+}
+
+.kpi-number{
+    font-size:30px;
+    font-weight:800;
+}
+
+.kpi-label{
+    font-size:12px;
+    opacity:.85;
+    letter-spacing:.3px;
+}
+
+/* TABLE CARD */
+.crm-card{
+    border:none;
+    border-radius:16px;
+    box-shadow:0 4px 14px rgba(0,0,0,.07);
+    overflow:hidden;
+}
+
+/* TABLE */
+.table th{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    background:#f1f5f9;
+    color:#64748b;
+    border:0;
+}
+
+.table td{
+    vertical-align:middle;
+    padding:12px 10px;
+}
+
+.table-hover tbody tr:hover{
+    background:#f5f7ff;
+}
+
+/* COMPANY AVATAR */
+.company-avatar{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:linear-gradient(135deg,var(--ts-primary),var(--ts-secondary));
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+
+/* STATUS PILLS */
+.status-pill{
+    padding:5px 10px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:600;
+    display:inline-block;
+}
+
+.status-process{
+    background:#fff7ed;
+    color:#9a3412;
+}
+
+.status-completed{
+    background:#ecfdf5;
+    color:#065f46;
+}
+
+.status-rejected{
+    background:#fef2f2;
+    color:#991b1b;
+}
+
+/* EMPTY STATE */
+.empty-state{
+    padding:60px 20px;
+    text-align:center;
+    color:#64748b;
+}
+
+/* MOBILE CARDS */
+.mobile-card{
+    border:none;
+    border-radius:14px;
+    margin-bottom:12px;
+    box-shadow:0 4px 14px rgba(0,0,0,.06);
+}
+
+.mobile-label{
+    font-size:11px;
+    color:#64748b;
+    margin-bottom:2px;
+}
+
+.mobile-value{
+    font-weight:600;
+}
+
+/* RESPONSIVE */
+@media (max-width:768px){
+    .crm-header{
+        padding:16px;
+    }
+
+    .kpi-number{
+        font-size:22px;
+    }
+
+    .desktop-table{
+        display:none;
+    }
+}
+
+@media (min-width:769px){
+    .mobile-view{
+        display:none;
+    }
+}
+</style>
+
+<div class="container mt-3">
+
+    <!-- HEADER -->
+    <div class="crm-header">
+        <h2 class="mb-1"> My Applications</h2>
+        <p class="mb-0">Track your application progress in real time.</p>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="row mb-4">
+
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card kpi-card kpi-total">
+                <div class="card-body">
+                    <div class="kpi-number">{{ total }}</div>
+                    <div class="kpi-label">Total Applications</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card kpi-card kpi-process">
+                <div class="card-body">
+                    <div class="kpi-number">{{ in_process }}</div>
+                    <div class="kpi-label">In Process</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card kpi-card kpi-completed">
+                <div class="card-body">
+                    <div class="kpi-number">{{ completed }}</div>
+                    <div class="kpi-label">Completed</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card kpi-card kpi-rejected">
+                <div class="card-body">
+                    <div class="kpi-number">{{ rejected }}</div>
+                    <div class="kpi-label">Rejected</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- DESKTOP TABLE -->
+    <div class="card crm-card desktop-table">
+
+        <div class="card-header bg-white border-0 py-3">
+            <h5 class="mb-0 fw-semibold">Application History</h5>
+        </div>
+
+        <div class="card-body p-0">
+
+            {% if applications %}
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Company</th>
+                            <th>Sender ID</th>
+                            <th>Service</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for app in applications %}
+                        <tr>
+
+                            <td>#{{ app.id }}</td>
+
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="company-avatar me-2">
+                                        {{ app.company[0]|upper if app.company else "C" }}
+                                    </div>
+                                    <strong>{{ app.company }}</strong>
+                                </div>
+                            </td>
+
+                            <td>{{ app.sender_id }}</td>
+                            <td>{{ app.service }}</td>
+
+                            <td>
+                                {% if app.status in ["Draft","Sent"] %}
+                                    <span class="status-pill status-process">In Process</span>
+                                {% elif app.status == "Completed" %}
+                                    <span class="status-pill status-completed">Completed</span>
+                                {% elif app.status == "Rejected" %}
+                                    <span class="status-pill status-rejected">Rejected</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ app.status }}</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ app.date_applied.strftime("%d %b %Y") if app.date_applied else "-" }}
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+            {% else %}
+
+            <div class="empty-state">
+                <h4>No Applications Yet</h4>
+                <p>Applications submitted through TalkSasa will appear here.</p>
+            </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!-- MOBILE VIEW -->
+    <div class="mobile-view">
+
+        {% for app in applications %}
+
+        <div class="card mobile-card">
+            <div class="card-body">
+
+                <div class="d-flex align-items-center mb-3">
+                    <div class="company-avatar me-2">
+                        {{ app.company[0]|upper if app.company else "C" }}
+                    </div>
+
+                    <div>
+                        <strong>{{ app.company }}</strong><br>
+                        <small class="text-muted">#{{ app.id }}</small>
+                    </div>
+                </div>
+
+                <div class="mb-2">
+                    <div class="mobile-label">Sender ID</div>
+                    <div class="mobile-value">{{ app.sender_id }}</div>
+                </div>
+
+                <div class="mb-2">
+                    <div class="mobile-label">Service</div>
+                    <div class="mobile-value">{{ app.service }}</div>
+                </div>
+
+                <div class="mb-2">
+                    <div class="mobile-label">Status</div>
+
+                    {% if app.status in ["Draft","Sent"] %}
+                        <span class="status-pill status-process">In Process</span>
+                    {% elif app.status == "Completed" %}
+                        <span class="status-pill status-completed">Completed</span>
+                    {% elif app.status == "Rejected" %}
+                        <span class="status-pill status-rejected">Rejected</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ app.status }}</span>
+                    {% endif %}
+
+                </div>
+
+                <div>
+                    <div class="mobile-label">Date</div>
+                    <div class="mobile-value">
+                        {{ app.date_applied.strftime("%d %b %Y") if app.date_applied else "-" }}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

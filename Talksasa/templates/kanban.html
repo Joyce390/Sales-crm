@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3 class="mb-3">{{ title }}</h3>
+
+<style>
+/* ================= TALK SASA THEME ================= */
+.bg-ts-dark-blue {
+    background: #1f3c88;
+    color: white;
+}
+
+.bg-ts-light-blue {
+    background: #4da3ff;
+    color: white;
+}
+
+.bg-ts-dark-purple {
+    background: #4b2067;
+    color: white;
+}
+
+.bg-ts-light-purple {
+    background: #b48cff;
+    color: white;
+}
+
+/* ================= BOARD ================= */
+.board-wrapper {
+    overflow-x: auto;
+}
+
+.board {
+    display: flex;
+    gap: 10px;
+    width: max-content;
+    min-width: 100%;
+}
+
+.stage-column {
+    min-width: 260px;
+    width: 260px;
+}
+
+/* ================= LEAD CARD ================= */
+.lead-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 8px;
+    background: #fafafa;
+    font-size: 12.5px;
+    cursor: grab;
+    transition: all 0.2s ease;
+}
+
+.lead-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,.1);
+}
+
+.lead-card:active {
+    cursor: grabbing;
+}
+
+.lead-title {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.stage-body {
+    min-height: 500px;
+}
+
+.sortable-ghost {
+    opacity: .4;
+}
+
+.sortable-chosen {
+    transform: rotate(2deg);
+}
+
+.sortable-drag {
+    opacity: 1;
+}
+</style>
+
+<!-- ================= ADD LEAD ================= -->
+{% if session.role in ['sales','tech','superadmin'] %}
+
+<div class="card shadow-sm mb-3">
+
+    <div class="card-header py-2 d-flex justify-content-between align-items-center"
+         data-bs-toggle="collapse"
+         data-bs-target="#addLeadForm"
+         style="cursor:pointer;">
+
+        <span>➕ Add Lead</span>
+        <span>▼</span>
+
+    </div>
+
+    <div id="addLeadForm" class="collapse">
+
+        <div class="card-body py-2">
+
+            <form method="POST" action="{{ url_for('add_lead') }}">
+
+                <div class="row g-2">
+
+                    <div class="col-md-3">
+                        <input class="form-control form-control-sm"
+                               name="name"
+                               placeholder="Lead Name"
+                               required>
+                    </div>
+
+                    <div class="col-md-3">
+                        <input class="form-control form-control-sm"
+                               name="company"
+                               placeholder="Company">
+                    </div>
+
+                    <div class="col-md-3">
+                        <input class="form-control form-control-sm"
+                               name="phone"
+                               placeholder="Phone">
+                    </div>
+
+                    <div class="col-md-3">
+                        <input class="form-control form-control-sm"
+                               name="email"
+                               placeholder="Email">
+                    </div>
+
+                    <div class="col-12 mt-2">
+                        <button class="btn btn-primary btn-sm w-100">
+                            Save Lead
+                        </button>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+<!-- ================= BOARD ================= -->
+<div class="board-wrapper">
+
+<div class="board">
+
+{% set stages = [
+    'New Lead',
+    'Demo Scheduled',
+    'Awaiting Decision',
+    'Lipa Mdogo Mdogo',
+    'Converted',
+    'Lost'
+] %}
+
+{% for stage in stages %}
+
+<div class="stage-column">
+
+    <div class="card shadow-sm">
+
+        <!-- HEADER -->
+        <div class="card-header text-center py-2 fw-bold
+
+            {% if stage == 'New Lead' %}
+                bg-ts-light-blue
+
+            {% elif stage == 'Demo Scheduled' %}
+                bg-ts-dark-blue
+
+            {% elif stage == 'Awaiting Decision' %}
+                bg-ts-dark-purple
+
+            {% elif stage == 'Lipa Mdogo Mdogo' %}
+                bg-warning
+
+            {% elif stage == 'Converted' %}
+                bg-success text-white
+
+            {% elif stage == 'Lost' %}
+                bg-danger text-white
+
+            {% endif %}
+        ">
+            {{ stage }}
+        </div>
+
+        <!-- COLUMN BODY -->
+        <div class="card-body p-2 stage-body"
+             data-stage="{{ stage }}">
+
+            {% for item in items %}
+                {% if item.stage == stage %}
+
+                <div class="lead-card"
+                     data-id="{{ item.id }}">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <span class="lead-title">
+                            {{ item.name }}
+                        </span>
+
+                        <button class="btn btn-sm btn-link p-0"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#lead{{ item.id }}">
+                            ⋯
+                        </button>
+
+                    </div>
+
+                    <div id="lead{{ item.id }}"
+                         class="collapse mt-2">
+
+                        <small class="text-muted d-block">
+                            {{ item.company }}
+                        </small>
+
+                        <small class="d-block">
+                            {{ item.phone }}
+                        </small>
+
+                        <small class="d-block">
+                            {{ item.email }}
+                        </small>
+
+                        <!-- Manual Move Option -->
+                        <form method="POST"
+                              action="{{ url_for('update_lead_stage', id=item.id) }}"
+                              class="mt-2">
+
+                            <select name="stage"
+                                    class="form-select form-select-sm">
+
+                                {% for s in stages %}
+                                <option value="{{ s }}"
+                                    {% if s == item.stage %}selected{% endif %}>
+                                    {{ s }}
+                                </option>
+                                {% endfor %}
+
+                            </select>
+
+                            <button class="btn btn-dark btn-sm w-100 mt-1">
+                                Move
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+</div>
+
+<!-- ================= SORTABLE JS ================= -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll(".stage-body").forEach(column => {
+
+        new Sortable(column, {
+
+            group: "crm-leads",
+            animation: 150,
+
+            onEnd: function (evt) {
+
+                const leadId = evt.item.dataset.id;
+                const newStage = evt.to.dataset.stage;
+
+                fetch(`/update_lead_stage_drag/${leadId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        stage: newStage
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Lead updated");
+                })
+                .catch(error => {
+                    console.error(error);
+                    location.reload();
+                });
+
+            }
+
+        });
+
+    });
+
+});
+</script>
+
+{% endblock %}

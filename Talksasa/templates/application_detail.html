@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Application Details</h3>
+
+<!-- INFO CARD -->
+<div class="card p-3 mb-3">
+
+    <p><b>Customer:</b> {{ application.customer.name }}</p>
+    <p><b>Company:</b> {{ application.company }}</p>
+    <p><b>Service:</b> {{ application.service }}</p>
+
+    <!-- STREAM ADDED -->
+    <p>
+        <b>Stream:</b>
+        {% if application.stream == 'Bumble Bee' %}
+            <span class="badge bg-warning text-dark">Bumble Bee</span>
+
+        {% elif application.stream == 'Lady Bird' %}
+            <span class="badge bg-info text-dark">Lady Bird</span>
+
+        {% else %}
+            <span class="badge bg-secondary">Not Set</span>
+        {% endif %}
+    </p>
+
+    <p>
+        <b>Status:</b>
+        <span class="badge bg-dark">{{ application.status }}</span>
+    </p>
+
+</div>
+
+{% set ns = namespace(has_docs=false, has_payment=false) %}
+
+{% for file in application.payment_proofs %}
+    {% if file.file_type == "document" %}
+        {% set ns.has_docs = true %}
+    {% endif %}
+    {% if file.file_type == "payment_proof" %}
+        {% set ns.has_payment = true %}
+    {% endif %}
+{% endfor %}
+
+<!-- TABS -->
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#docs">
+            Documents
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#payment">
+            Payment Proof
+        </a>
+    </li>
+</ul>
+
+<div class="tab-content mt-3">
+
+    <!-- DOCUMENTS -->
+    <div class="tab-pane fade show active" id="docs">
+
+        <h5>Upload Document</h5>
+
+        <form method="POST"
+              action="{{ url_for('upload_document', app_id=application.id) }}"
+              enctype="multipart/form-data">
+
+            <input type="file"
+                   name="file"
+                   class="form-control mb-2"
+                   required>
+
+            <button class="btn btn-primary">
+                Upload Document
+            </button>
+        </form>
+
+        <hr>
+
+        <h5>Uploaded Documents</h5>
+
+        {% for file in application.payment_proofs %}
+            {% if file.file_type == "document" %}
+                <p> {{ file.filename }}</p>
+            {% endif %}
+        {% endfor %}
+
+        {% if not ns.has_docs %}
+            <p class="text-muted">No documents uploaded</p>
+        {% endif %}
+
+    </div>
+
+    <!-- PAYMENT -->
+    <div class="tab-pane fade" id="payment">
+
+        <h5>Upload Payment Proof</h5>
+
+        <form method="POST"
+              action="{{ url_for('upload_payment', app_id=application.id) }}"
+              enctype="multipart/form-data">
+
+            <input type="file"
+                   name="file"
+                   class="form-control mb-2"
+                   required>
+
+            <button class="btn btn-success">
+                Upload Payment
+            </button>
+
+        </form>
+
+        <hr>
+
+        <h5>Uploaded Payment Proofs</h5>
+
+        {% for file in application.payment_proofs %}
+            {% if file.file_type == "payment_proof" %}
+                <p> {{ file.filename }}</p>
+            {% endif %}
+        {% endfor %}
+
+        {% if not ns.has_payment %}
+            <p class="text-muted">No payment proof uploaded</p>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- SEND TO STREAM -->
+<hr>
+
+<div class="mt-3">
+
+    <h5>Send Application to Stream</h5>
+
+    {% if application.status != "Sent" %}
+
+        <form method="POST"
+              action="{{ url_for('send_to_provider', app_id=application.id) }}">
+
+            <input type="text"
+                   name="subject"
+                   class="form-control mb-2"
+                   placeholder="Email Subject">
+
+            <textarea name="body"
+                      class="form-control mb-2"
+                      rows="4"
+                      placeholder="Email Body"></textarea>
+
+            <input type="text"
+                   name="cc"
+                   class="form-control mb-2"
+                   placeholder="CC emails (comma separated)">
+
+            <button type="submit"
+                    class="btn btn-dark"
+                    {% if not ns.has_docs or not ns.has_payment or not application.stream %}
+                        disabled
+                    {% endif %}>
+                Send to Stream
+            </button>
+
+        </form>
+
+        {% if not ns.has_docs or not ns.has_payment %}
+            <small class="text-danger">
+                Upload both documents and payment proof before sending.
+            </small>
+        {% elif not application.stream %}
+            <small class="text-danger">
+                Stream not selected for this application.
+            </small>
+        {% endif %}
+
+    {% else %}
+
+        <div class="alert alert-success">
+            ✔ Application already sent
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

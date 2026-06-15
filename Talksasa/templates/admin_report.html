@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mb-4">📊 Admin Report Dashboard</h2>
+
+<a href="{{ url_for('admin_report_pdf') }}" class="btn btn-dark mb-3">
+    ⬇ Download PDF Report
+</a>
+
+<style>
+.card-title-small {
+    font-size: 13px;
+    opacity: 0.9;
+}
+.big-number {
+    font-size: 28px;
+    font-weight: bold;
+}
+.section-title {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+</style>
+
+<!-- ===================== TOP SUMMARY CARDS ===================== -->
+<div class="row g-3">
+
+    <div class="col-md-3">
+        <div class="card text-white bg-primary shadow">
+            <div class="card-body text-center">
+                <div class="card-title-small">Total Leads</div>
+                <div class="big-number">{{ total_leads }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-info shadow">
+            <div class="card-body text-center">
+                <div class="card-title-small">Sales Leads</div>
+                <div class="big-number">{{ sales_leads }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-secondary shadow">
+            <div class="card-body text-center">
+                <div class="card-title-small">Tech Leads</div>
+                <div class="big-number">{{ tech_leads }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success shadow">
+            <div class="card-body text-center">
+                <div class="card-title-small">Converted</div>
+                <div class="big-number">{{ converted }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-danger shadow">
+            <div class="card-body text-center">
+                <div class="card-title-small">Lost</div>
+                <div class="big-number">{{ lost }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white shadow" style="background:#1f3c88;">
+            <div class="card-body text-center">
+                <div class="card-title-small">Sender IDs (Week)</div>
+                <div class="big-number">{{ weekly_sender_ids }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white shadow" style="background:#4b2067;">
+            <div class="card-body text-center">
+                <div class="card-title-small">Sender IDs (Month)</div>
+                <div class="big-number">{{ monthly_sender_ids }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white shadow" style="background:#b48cff;">
+            <div class="card-body text-center">
+                <div class="card-title-small">Total Sender IDs</div>
+                <div class="big-number">{{ total_sender_ids }}</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===================== TOP PERFORMERS ===================== -->
+<h3 class="mt-4"> Top Performers</h3>
+
+<div class="row g-2">
+
+    <div class="col-md-6">
+        <div class="alert alert-success d-flex justify-content-between align-items-center">
+            <div>
+                <strong>Top Sales:</strong>
+                {% if top_sales %}
+                    {{ top_sales.name }}
+                {% else %}
+                    No data
+                {% endif %}
+            </div>
+
+            {% if top_sales %}
+            <span class="badge bg-success">
+                {{ top_sales.rate }}%
+            </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="alert alert-primary d-flex justify-content-between align-items-center">
+            <div>
+                <strong>Top Tech:</strong>
+                {% if top_tech %}
+                    {{ top_tech.name }}
+                {% else %}
+                    No data
+                {% endif %}
+            </div>
+
+            {% if top_tech %}
+            <span class="badge bg-primary">
+                {{ top_tech.rate }}%
+            </span>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<!-- ===================== SALES PERFORMANCE ===================== -->
+<div class="section-title">👥 Sales Team Performance</div>
+
+<table class="table table-striped table-bordered shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Sales Person</th>
+            <th>Total Leads</th>
+            <th>Converted</th>
+            <th>Lost</th>
+            <th>Conversion Rate</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in sales_performance %}
+        <tr>
+            <td>{{ s.name }}</td>
+            <td>{{ s.total }}</td>
+            <td>{{ s.converted }}</td>
+            <td>{{ s.lost }}</td>
+            <td>{{ s.rate }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- ===================== TECH PERFORMANCE ===================== -->
+<div class="section-title">🛠 Tech Team Performance</div>
+
+<table class="table table-striped table-bordered shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Tech Person</th>
+            <th>Total Leads</th>
+            <th>Converted</th>
+            <th>Lost</th>
+            <th>Conversion Rate</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in tech_performance %}
+        <tr>
+            <td>{{ t.name }}</td>
+            <td>{{ t.total }}</td>
+            <td>{{ t.converted }}</td>
+            <td>{{ t.lost }}</td>
+            <td>{{ t.rate }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

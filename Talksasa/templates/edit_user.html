@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card shadow">
+                <div class="card-header bg-warning">
+                    <h4>✏ Edit User</h4>
+                </div>
+
+                <div class="card-body">
+
+                    <form method="POST">
+
+                        <div class="mb-3">
+                            <label>Username</label>
+                            <input type="text"
+                                   name="username"
+                                   class="form-control"
+                                   value="{{ user.username }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label>New Password (optional)</label>
+                            <input type="password"
+                                   name="password"
+                                   class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Role</label>
+                            <select name="role" class="form-select">
+
+                                <option value="sales"
+                                    {% if user.role == 'sales' %}selected{% endif %}>
+                                    Sales
+                                </option>
+
+                                <option value="tech"
+                                    {% if user.role == 'tech' %}selected{% endif %}>
+                                    Tech
+                                </option>
+
+                                <option value="customer"
+                                    {% if user.role == 'customer' %}selected{% endif %}>
+                                    Customer
+                                </option>
+
+                                <option value="superadmin"
+                                    {% if user.role == 'superadmin' %}selected{% endif %}>
+                                    Super Admin
+                                </option>
+
+                            </select>
+                        </div>
+
+                        <button class="btn btn-success">
+                            Save Changes
+                        </button>
+
+                        <a href="{{ url_for('create_user') }}"
+                           class="btn btn-secondary">
+                            Cancel
+                        </a>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

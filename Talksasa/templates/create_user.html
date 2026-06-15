@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+body{
+    background:#f5f7fb;
+}
+
+.crm-header{
+    background:linear-gradient(135deg,#1b2a6b,#c84fd4);
+    color:white;
+    border-radius:20px;
+    padding:25px;
+    margin-bottom:25px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+}
+
+.crm-card{
+    border:none;
+    border-radius:18px;
+    box-shadow:0 4px 18px rgba(0,0,0,.08);
+}
+
+.stat-card{
+    border:none;
+    border-radius:16px;
+    color:white;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.stat-users{
+    background:linear-gradient(135deg,#1b2a6b,#3049b0);
+}
+
+.stat-sales{
+    background:linear-gradient(135deg,#ff5ea8,#ff8cc3);
+}
+
+.stat-tech{
+    background:linear-gradient(135deg,#7b4dff,#b388ff);
+}
+
+.stat-customers{
+    background:linear-gradient(135deg,#0d6efd,#4dabf7);
+}
+
+.card-title-small{
+    font-size:14px;
+    opacity:.9;
+}
+
+.card-number{
+    font-size:28px;
+    font-weight:700;
+}
+
+.form-label{
+    font-weight:600;
+}
+
+.btn-create{
+    background:#c84fd4;
+    border:none;
+    color:white;
+    font-weight:600;
+}
+
+.btn-create:hover{
+    background:#b43bc0;
+    color:white;
+}
+
+.table thead{
+    background:#f8f9fa;
+}
+
+.table th{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+}
+
+.user-avatar{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:#1b2a6b;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+.badge-role{
+    padding:8px 12px;
+    border-radius:30px;
+    font-size:12px;
+}
+
+.page-title{
+    font-weight:700;
+}
+
+.table-hover tbody tr:hover{
+    background:#faf8ff;
+}
+
+.action-btn{
+    border-radius:10px;
+}
+
+.empty-state{
+    padding:50px;
+    text-align:center;
+    color:#6c757d;
+}
+</style>
+
+<div class="container-fluid mt-4">
+<!-- Header -->
+<div class="crm-header">
+    <h2 class="page-title mb-1">
+        User Management
+    </h2>
+    <p class="mb-0">
+        Create, manage and control user access across the TalkSasa CRM.
+    </p>
+</div>
+
+<!-- Stats -->
+<div class="row mb-4">
+
+    <div class="col-md-3 mb-3">
+        <div class="card stat-card stat-users">
+            <div class="card-body">
+                <div class="card-title-small">Total Users</div>
+                <div class="card-number">
+                    {{ users|length }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card stat-card stat-sales">
+            <div class="card-body">
+                <div class="card-title-small">Sales Team</div>
+                <div class="card-number">
+                    {{ users|selectattr('role','equalto','sales')|list|length }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card stat-card stat-tech">
+            <div class="card-body">
+                <div class="card-title-small">Tech Team</div>
+                <div class="card-number">
+                    {{ users|selectattr('role','equalto','tech')|list|length }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card stat-card stat-customers">
+            <div class="card-body">
+                <div class="card-title-small">Customers</div>
+                <div class="card-number">
+                    {{ users|selectattr('role','equalto','customer')|list|length }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+
+    <!-- Create User -->
+    <div class="col-lg-4 mb-4">
+
+        <div class="card crm-card">
+
+            <div class="card-header bg-white border-0 pt-4">
+                <h5 class="mb-0">
+                    ➕ Create User
+                </h5>
+            </div>
+
+            <div class="card-body">
+
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-info">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST">
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Username
+                        </label>
+
+                        <input
+                            type="text"
+                            name="username"
+                            class="form-control"
+                            placeholder="Enter username"
+                            required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Password
+                        </label>
+
+                        <input
+                            type="password"
+                            name="password"
+                            class="form-control"
+                            placeholder="Enter password"
+                            required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            User Role
+                        </label>
+
+                        <select
+                            name="role"
+                            class="form-select">
+
+                            <option value="sales">Sales</option>
+                            <option value="tech">Tech</option>
+                            <option value="customer">Customer</option>
+                            <option value="superadmin">Super Admin</option>
+
+                        </select>
+                    </div>
+
+                    <div class="d-grid">
+                        <button
+                            type="submit"
+                            class="btn btn-create btn-lg">
+
+                            Create User
+
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Users Table -->
+    <div class="col-lg-8">
+
+        <div class="card crm-card">
+
+            <div class="card-header bg-white border-0 pt-4 d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0">
+                    User Directory
+                </h5>
+
+                <span class="badge bg-dark">
+                    {{ users|length }} Users
+                </span>
+
+            </div>
+
+            <div class="card-body p-0">
+
+                {% if users %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Role</th>
+                                <th class="text-center">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for user in users %}
+
+                            <tr>
+
+                                <td>
+                                    #{{ user.id }}
+                                </td>
+
+                                <td>
+                                    <div class="d-flex align-items-center">
+
+                                        <div class="user-avatar me-3">
+                                            {{ user.username[0]|upper }}
+                                        </div>
+
+                                        <div>
+                                            <strong>
+                                                {{ user.username }}
+                                            </strong>
+                                        </div>
+
+                                    </div>
+                                </td>
+
+                                <td>
+
+                                    {% if user.role == "superadmin" %}
+                                        <span class="badge bg-danger badge-role">
+                                            Super Admin
+                                        </span>
+
+                                    {% elif user.role == "sales" %}
+                                        <span class="badge bg-success badge-role">
+                                            Sales
+                                        </span>
+
+                                    {% elif user.role == "tech" %}
+                                        <span class="badge bg-primary badge-role">
+                                            Tech
+                                        </span>
+
+                                    {% else %}
+                                        <span class="badge bg-secondary badge-role">
+                                            Customer
+                                        </span>
+                                    {% endif %}
+
+                                </td>
+
+                                <td class="text-center">
+
+                                    <a
+                                        href="{{ url_for('edit_user', user_id=user.id) }}"
+                                        class="btn btn-warning btn-sm action-btn">
+
+                                        ✏ Edit
+
+                                    </a>
+
+                                    {% if user.username != session.get('username') %}
+
+                                    <a
+                                        href="{{ url_for('delete_user', user_id=user.id) }}"
+                                        class="btn btn-danger btn-sm action-btn"
+                                        onclick="return confirm('Delete this user?')">
+
+                                        🗑 Delete
+
+                                    </a>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                {% else %}
+
+                <div class="empty-state">
+
+                    <h5>No Users Found</h5>
+
+                    <p>
+                        Create your first user to get started.
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">Role Permissions</h2>
+
+<form method="POST">
+
+    <div class="mb-3">
+        <label class="form-label">Select Role</label>
+        <select name="role" class="form-select">
+            <option value="sales">Sales</option>
+            <option value="tech">Tech</option>
+            <option value="superadmin">Admin</option>
+        </select>
+    </div>
+
+    <hr>
+
+    <h5>Dashboard</h5>
+    <label><input type="checkbox" name="can_view_dashboard"> View Dashboard</label>
+
+    <hr>
+
+    <h5>Customers</h5>
+    <label><input type="checkbox" name="can_view_customers"> View</label><br>
+    <label><input type="checkbox" name="can_create_customers"> Create</label><br>
+    <label><input type="checkbox" name="can_edit_customers"> Edit</label><br>
+    <label><input type="checkbox" name="can_delete_customers"> Delete</label>
+
+    <hr>
+
+    <h5>Applications</h5>
+    <label><input type="checkbox" name="can_view_applications"> View</label><br>
+    <label><input type="checkbox" name="can_create_applications"> Create</label><br>
+    <label><input type="checkbox" name="can_edit_applications"> Edit</label><br>
+    <label><input type="checkbox" name="can_delete_applications"> Delete</label>
+
+    <hr>
+
+    <h5>Assignment</h5>
+    <label><input type="checkbox" name="can_assign_applications"> Assign Applications</label>
+
+    <hr>
+
+    <h5>Uploads</h5>
+    <label><input type="checkbox" name="can_upload_pop"> Upload Payment Proof</label>
+
+    <hr>
+
+    <h5>Admin Controls</h5>
+    <label><input type="checkbox" name="can_manage_permissions"> Manage Permissions</label>
+
+    <br><br>
+
+    <button class="btn btn-success">Save Permissions</button>
+
+</form>
+
+{% endblock %}

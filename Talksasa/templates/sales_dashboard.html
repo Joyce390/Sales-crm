@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mt-4">Sales Dashboard</h2>
+
+<div class="row my-4">
+
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5>Customers</h5>
+                <h3>{{ customers|length }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5>Applications</h5>
+                <h3>{{ applications|length }}</h3>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<a href="{{ url_for('add_customer') }}" class="btn btn-primary mb-3">
+    + Add Customer
+</a>
+
+<h4>Applications</h4>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Company</th>
+            <th>Service</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for app in applications %}
+        <tr>
+
+            <td>{{ app.customer.name }}</td>
+            <td>{{ app.company }}</td>
+            <td>{{ app.service }}</td>
+
+
+            <td>
+                <span class="badge 
+                    {% if app.status == 'Completed' %}bg-success
+                    {% elif app.status == 'In Progress' %}bg-info
+                    {% elif app.status == 'Rejected' %}bg-danger
+                    {% else %}bg-warning{% endif %}">
+                    {{ app.status }}
+                </span>
+            </td>
+
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

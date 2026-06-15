@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Edit Application</h3>
+
+<form method="POST">
+
+    <!-- CUSTOMER -->
+    <div class="mb-3">
+        <label>Customer</label>
+        <select name="customer_id" class="form-control">
+
+            {% for customer in customers %}
+                <option value="{{ customer.id }}"
+                    {% if customer.id == application.customer_id %}selected{% endif %}>
+                    {{ customer.name }}
+                </option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <!-- SENDER ID -->
+    <div class="mb-3">
+        <label>Sender ID</label>
+        <input type="text"
+               name="sender_id"
+               class="form-control"
+               value="{{ application.sender_id }}">
+    </div>
+
+    <!-- COMPANY -->
+    <div class="mb-3">
+        <label>Company</label>
+        <input type="text"
+               name="company"
+               class="form-control"
+               value="{{ application.company }}">
+    </div>
+
+    <!-- SERVICE -->
+    <div class="mb-3">
+        <label>Service</label>
+        <input type="text"
+               name="service"
+               class="form-control"
+               value="{{ application.service }}">
+    </div>
+
+    <!-- STREAM -->
+    <div class="mb-3">
+        <label>Stream</label>
+        <select name="stream" class="form-control">
+
+            <option value="Bumble Bee"
+                {% if application.stream == "Bumble Bee" %}selected{% endif %}>
+                Bumble Bee
+            </option>
+
+            <option value="Lady Bird"
+                {% if application.stream == "Lady Bird" %}selected{% endif %}>
+                Lady Bird
+            </option>
+
+        </select>
+    </div>
+
+    <button class="btn btn-primary">
+        Update Application
+    </button>
+
+</form>
+
+{% endblock %}
